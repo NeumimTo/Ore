@@ -1,11 +1,12 @@
 package util
 
+import java.math.BigInteger
 import java.nio.file.{Files, Path}
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util.Date
+import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}
 
 import db.impl.OrePostgresDriver.api._
-import org.spongepowered.plugin.meta.version.ComparableVersion.{ListItem, StringItem}
 
 /**
   * Helper class for handling User input.

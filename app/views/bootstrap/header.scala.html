@@ -101,12 +101,6 @@ The main header displayed on each layout.
                                 <i class="pull-right fa fa-user"></i>
                             </a>
                         </li>
-                        <li>
-                            <a href="@projectRoutes.Projects.showCreator()">
-                                <span class="pull-left">New</span>
-                                <i class="pull-right fa fa-plus"></i>
-                            </a>
-                        </li>
 
                         @if(canViewFlags(user)) {
                             <li>
@@ -135,6 +129,19 @@ The main header displayed on each layout.
                                 </a>
                             </li>
                         }
+
+                        <li>
+                            <a href="@projectRoutes.Projects.showCreator()">
+                                <span class="pull-left">New Project</span>
+                                <i class="pull-right fa fa-plus"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@routes.Organizations.showCreator()">
+                                <span class="pull-left">New Organization</span>
+                                <i class="pull-right fa fa-plus"></i>
+                            </a>
+                        </li>
 
                         <li role="separator" class="divider"></li>
                         <li>
