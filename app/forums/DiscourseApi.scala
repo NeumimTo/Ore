@@ -92,9 +92,20 @@ trait DiscourseApi {
       "password" -> Seq(password),
       "active" -> Seq("true")
     )
-    println("url = " + url)
-    println("data = " + data)
     this.ws.url(url).post(data).map(response => validate(response)(json => (json \ "user_id").as[Int]))
+  }
+
+  /**
+    * Adds a group to the specified user.
+    *
+    * @param userId   User ID
+    * @param groupId  ID of group to add
+    * @return         True if successful
+    */
+  def addUserGroup(userId: Int, groupId: Int) = {
+    val url = this.url + "/admin/users/" + userId + "/groups?api_key=" + this.key + "&api_username=" + this.admin
+    val data = Map("group_id" -> Seq(groupId.toString))
+    this.ws.url(url).post(data)
   }
 
   /**

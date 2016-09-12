@@ -10,13 +10,25 @@ import util.{CryptoUtils, OreConfig}
 class OrganizationBase(override val service: ModelService, forums: DiscourseApi, config: OreConfig)
                        extends ModelBase[OrganizationTable, Organization] {
 
+  import this.service.await
+
   override val modelClass = classOf[Organization]
 
+  /**
+    * Creates a new [[Organization]]. This method creates a new user on the
+    * forums to represent the Organization.
+    *
+    * @param name     Organization name
+    * @param ownerId  User ID of the organization owner
+    * @return         New organization if successful, None otherwise
+    */
   def create(name: String, ownerId: Int): Option[Organization] = {
-    val password = RandomStringUtils.randomAlphanumeric(60)
+    val password = RandomStringUtils.randomAlphanumeric(this.config.orgs.getInt("passwordLength").get)
     val encryptedPassword = CryptoUtils.encrypt(password, this.config.play.getString("crypto.secret").get)
     val email = name + '@' + this.config.orgs.getString("dummyEmailDomain").get
-    this.service.await(this.forums.createUser(name, name, email, password)).get.map { userId =>
+
+    await(this.forums.createUser(name, name, email, password)).get.map { userId =>
+      await(this.forums.addUserGroup(userId, this.config.orgs.getInt("groupId").get)).get
       val org = new Organization(Some(userId), None, name, encryptedPassword, ownerId)
       this.service.access[OrganizationTable, Organization](this.modelClass).add(org)
     }
