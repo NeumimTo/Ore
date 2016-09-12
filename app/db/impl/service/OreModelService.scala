@@ -7,10 +7,11 @@ import db.action.ModelActions
 import db.impl.OrePostgresDriver.api._
 import db.impl.OreTypeSetters._
 import db.impl.action.{PageActions, ProjectActions, UserActions, VersionActions}
-import db.impl.{ChannelTable, OrePostgresDriver}
+import db.impl.{ChannelTable, OrePostgresDriver, OrganizationTable}
 import db.{ModelRegistry, ModelService}
 import forums.DiscourseApi
 import models.project.Channel
+import models.user.Organization
 import ore.Colors.Color
 import ore.permission.role.RoleTypes.RoleType
 import ore.project.Categories.Category
@@ -43,6 +44,7 @@ class OreModelService @Inject()(config: OreConfig,
 
   val users = registerModelBase[UserBase](classOf[UserBase], new UserBase(this, forums, config))
   val projects = registerModelBase[ProjectBase](classOf[ProjectBase], new ProjectBase(this))
+  val orgs = registerModelBase[OrganizationBase](classOf[OrganizationBase], new OrganizationBase(this, forums, config))
 
   // Custom types
   registerTypeSetter(classOf[Color], ColorTypeSetter)
@@ -57,5 +59,8 @@ class OreModelService @Inject()(config: OreConfig,
   registerActions(new ProjectActions(this))
   registerActions(new UserActions(this))
   registerActions(new VersionActions(this))
+
+  registerActions(new ModelActions[OrganizationTable, Organization](this, classOf[Organization],
+    TableQuery[OrganizationTable]))
 
 }

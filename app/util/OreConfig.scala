@@ -5,7 +5,6 @@ import javax.inject.Inject
 import models.project.Channel
 import ore.Colors._
 import org.spongepowered.plugin.meta.version.ComparableVersion
-import org.spongepowered.plugin.meta.version.ComparableVersion.{ListItem, StringItem}
 import play.api.Configuration
 import util.StringUtils.compact
 
@@ -17,16 +16,17 @@ import util.StringUtils.compact
 final class OreConfig @Inject()(config: Configuration) {
 
   // Sub-configs
-  lazy val root = config
-  lazy val app = config.getConfig("application").get
-  lazy val play = config.getConfig("play").get
-  lazy val ore = config.getConfig("ore").get
-  lazy val channels = ore.getConfig("channels").get
-  lazy val pages = ore.getConfig("pages").get
-  lazy val projects = ore.getConfig("projects").get
-  lazy val users = ore.getConfig("users").get
-  lazy val forums = root.getConfig("discourse").get
-  lazy val sponge = root.getConfig("sponge").get
+  lazy val root = this.config
+  lazy val app = this.config.getConfig("application").get
+  lazy val play = this.config.getConfig("play").get
+  lazy val ore = this.config.getConfig("ore").get
+  lazy val channels = this.ore.getConfig("channels").get
+  lazy val pages = this.ore.getConfig("pages").get
+  lazy val projects = this.ore.getConfig("projects").get
+  lazy val users = this.ore.getConfig("users").get
+  lazy val orgs = this.ore.getConfig("orgs").get
+  lazy val forums = this.root.getConfig("discourse").get
+  lazy val sponge = this.root.getConfig("sponge").get
 
   /**
     * The default color used for Channels.
@@ -72,9 +72,9 @@ final class OreConfig @Inject()(config: Configuration) {
   def getSuggestedNameForVersion(version: String): String
   = Option(new ComparableVersion(version).getFirstString).getOrElse(this.defaultChannelName)
 
-  lazy val debugLevel = ore.getInt("debug-level").get
+  lazy val debugLevel = this.ore.getInt("debug-level").get
   /** Returns true if the application is running in debug mode. */
-  def isDebug: Boolean = ore.getBoolean("debug").get
+  def isDebug: Boolean = this.ore.getBoolean("debug").get
   /** Sends a debug message if in debug mode */
   def debug(msg: Any, level: Int = 1) = if (isDebug && (level == this.debugLevel || level == -1)) println(msg)
   /** Asserts that the application is in debug mode. */

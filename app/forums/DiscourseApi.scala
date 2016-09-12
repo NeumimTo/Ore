@@ -28,6 +28,12 @@ trait DiscourseApi {
   /** The base URL */
   val url: String
 
+  /** The super secret API key */
+  val key: String
+
+  /** The username of an administrator */
+  val admin: String
+
   protected val ws: WSClient
 
   /**
@@ -55,7 +61,7 @@ trait DiscourseApi {
     this.ws.url(userUrl(username)).get.map { response =>
       validate(response) { json =>
         val userObj = (json \ "user").as[JsObject]
-        val user = new User(
+        new User(
           id            =   (userObj \ "id").asOpt[Int],
           _name         =   (userObj \ "name").asOpt[String],
           _username     =   (userObj \ "username").as[String],
@@ -64,9 +70,31 @@ trait DiscourseApi {
             .map(jd => new Timestamp(DateFormat.parse(jd).getTime)),
           _avatarUrl    =   (userObj \ "avatar_template").asOpt[String],
           _globalRoles  =   parseRoles(userObj).toList)
-        user
       }
     }
+  }
+
+  /**
+    * Creates a new user on the forums with the given parameters.
+    *
+    * @param name     User's full name
+    * @param username User's username
+    * @param email    User's email
+    * @param password User's password
+    * @return         ID of new user if created, None otherwise
+    */
+  def createUser(name: String, username: String, email: String, password: String): Future[Option[Int]] = {
+    val url = this.url + "/users?api_key=" + this.key + "&api_username=" + this.admin
+    val data = Map(
+      "name" -> Seq(name),
+      "username" -> Seq(username),
+      "email" -> Seq(email),
+      "password" -> Seq(password),
+      "active" -> Seq("true")
+    )
+    println("url = " + url)
+    println("data = " + data)
+    this.ws.url(url).post(data).map(response => validate(response)(json => (json \ "user_id").as[Int]))
   }
 
   /**

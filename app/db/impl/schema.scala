@@ -6,7 +6,7 @@ import db.impl.OrePostgresDriver.api._
 import db.ModelTable
 import models.project._
 import models.statistic.{ProjectView, VersionDownload}
-import models.user.{ProjectRole, User}
+import models.user.{Organization, ProjectRole, User}
 import ore.Colors.Color
 import ore.permission.role.RoleTypes.RoleType
 import ore.project.Categories.Category
@@ -118,6 +118,17 @@ class UserTable(tag: Tag) extends ModelTable[User](tag, "users") {
 
   override def * = (id.?, createdAt.?, name.?, username, email.?, tagline.?,
                     globalRoles, joinDate.?, avatarUrl.?) <> ((User.apply _).tupled, User.unapply)
+
+}
+
+class OrganizationTable(tag: Tag) extends ModelTable[Organization](tag, "organizations") {
+
+  override def id   =   column[Int]("id", O.PrimaryKey)
+  def name          =   column[String]("name")
+  def password      =   column[String]("password")
+  def ownerId       =   column[Int]("owner_id")
+
+  override def * = (id.?, createdAt.?, name, password, ownerId) <> ((Organization.apply _).tupled, Organization.unapply)
 
 }
 
