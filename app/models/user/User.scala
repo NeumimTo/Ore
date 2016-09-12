@@ -153,7 +153,7 @@ case class User(override val id: Option[Int] = None,
     *
     * @return ProjectRoles
     */
-  def projectRoles = this.getMany[ProjectRoleTable, ProjectRole](classOf[ProjectRole])
+  def projectRoles = this.oneToMany[ProjectRoleTable, ProjectRole](classOf[ProjectRole])
 
   /**
     * Sets the [[RoleTypes]]s that this User has globally.
@@ -195,7 +195,7 @@ case class User(override val id: Option[Int] = None,
     *
     * @return Flags submitted by user
     */
-  def flags = this.getMany[FlagTable, Flag](classOf[Flag])
+  def flags = this.oneToMany[FlagTable, Flag](classOf[Flag])
 
   /**
     * Returns true if the User has an unresolved [[Flag]] on the specified

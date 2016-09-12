@@ -4,7 +4,7 @@ import java.sql.Timestamp
 
 import com.google.common.base.Preconditions.checkNotNull
 import db.action.{ModelAccess, ModelActions, ModelFilter}
-import db.meta.{Actions, FieldBinding, ManyBinding}
+import db.meta.{Actions, FieldBinding, OneToManyBinding}
 import slick.driver.JdbcDriver
 
 import scala.concurrent.Future
@@ -28,7 +28,7 @@ abstract class Model(val id: Option[Int], val createdAt: Option[Timestamp], val 
 
   private var _isProcessed = false
   private var fieldBindings: Map[String, FieldBinding[M, _]] = Map.empty
-  private var manyBindings: Map[Class[_ <: Model], ManyBinding] = Map.empty
+  private var manyBindings: Map[Class[_ <: Model], OneToManyBinding] = Map.empty
 
   /**
     * Returns the ModelActions associated with this Model.
@@ -96,10 +96,10 @@ abstract class Model(val id: Option[Int], val createdAt: Option[Timestamp], val 
     * @param childClass   Child model class
     * @param ref          Reference column to this model in child table
     */
-  def bindMany(childClass: Class[_ <: Model], ref: ModelTable[_] => Rep[Int]) = {
+  def bindOneToMany(childClass: Class[_ <: Model], ref: ModelTable[_] => Rep[Int]) = {
     checkNotNull(childClass, "child class is null", "")
     checkNotNull(ref, "parent reference is null", "")
-    this.manyBindings += childClass -> ManyBinding(childClass, ref)
+    this.manyBindings += childClass -> OneToManyBinding(childClass, ref)
   }
 
   /**
@@ -109,7 +109,7 @@ abstract class Model(val id: Option[Int], val createdAt: Option[Timestamp], val 
     * @tparam Many       Child
     * @return            Set of children
     */
-  def getMany[ManyTable <: ModelTable[Many], Many <: Model](modelClass: Class[Many]) = Defined {
+  def oneToMany[ManyTable <: ModelTable[Many], Many <: Model](modelClass: Class[Many]) = Defined {
     checkNotNull(modelClass, "model class is null", "")
     val binding = this.manyBindings
       .find(_._1.isAssignableFrom(modelClass))

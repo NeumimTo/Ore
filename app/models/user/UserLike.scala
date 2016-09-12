@@ -64,7 +64,7 @@ trait UserLike extends Model {
     *
     * @return Projects owned by user
     */
-  def projects = this.getMany[ProjectTable, Project](classOf[Project])
+  def projects = this.oneToMany[ProjectTable, Project](classOf[Project])
 
   /**
     * Returns the date this User joined any Sponge services.

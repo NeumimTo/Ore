@@ -80,7 +80,7 @@ class ModelProcessor(service: ModelService) {
     //noinspection ComparingUnrelatedTypes
     if (modelClass.getDeclaredAnnotations.exists(_.annotationType.equals(classOf[HasMany]))) {
       val relations = modelClass.getDeclaredAnnotation(classOf[HasMany])
-      for (relation <- relations.value) model.bindMany(relation, t => BootstrapTypeSetters.getRep[Int](key, t))
+      for (relation <- relations.value) model.bindOneToMany(relation, t => BootstrapTypeSetters.getRep[Int](key, t))
     }
     model
   }
