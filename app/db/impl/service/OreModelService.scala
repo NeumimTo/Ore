@@ -6,12 +6,11 @@ import javax.inject.{Inject, Singleton}
 import db.action.ModelActions
 import db.impl.OrePostgresDriver.api._
 import db.impl.OreTypeSetters._
-import db.impl.action.{PageActions, ProjectActions, UserActions, VersionActions}
-import db.impl.{ChannelTable, OrePostgresDriver, OrganizationTable}
+import db.impl.action._
+import db.impl.{ChannelTable, OrePostgresDriver}
 import db.{ModelRegistry, ModelService}
 import forums.DiscourseApi
 import models.project.Channel
-import models.user.Organization
 import ore.Colors.Color
 import ore.permission.role.RoleTypes.RoleType
 import ore.project.Categories.Category
@@ -59,8 +58,6 @@ class OreModelService @Inject()(config: OreConfig,
   registerActions(new ProjectActions(this))
   registerActions(new UserActions(this))
   registerActions(new VersionActions(this))
-
-  registerActions(new ModelActions[OrganizationTable, Organization](this, classOf[Organization],
-    TableQuery[OrganizationTable]))
+  registerActions(new OrganizationActions(this))
 
 }
